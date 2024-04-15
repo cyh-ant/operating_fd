@@ -101,9 +101,9 @@ type ReconcilePodOpsLifecycle struct {
 // +kubebuilder:rbac:groups=core,resources=events,verbs=create;update;patch
 
 func (r *ReconcilePodOpsLifecycle) Reconcile(ctx context.Context, request reconcile.Request) (reconcile.Result, error) {
-	key := request.String()
+	key := fmt.Sprintf("%s/%s", request.Namespace, request.Name)
 	logger := r.Logger.WithValues("pod", key)
-	defer logger.Info("reconcile finished")
+	logger.Info("reconciling pod lifecycle")
 
 	pod := &corev1.Pod{}
 	err := r.Client.Get(ctx, request.NamespacedName, pod)
@@ -120,10 +120,6 @@ func (r *ReconcilePodOpsLifecycle) Reconcile(ctx context.Context, request reconc
 		logger.Info("skip pod with no satisfied")
 		return reconcile.Result{}, nil
 	}
-
-	//if pod.DeletionTimestamp != nil {
-	//	return reconcile.Result{}, nil
-	//}
 
 	idToLabelsMap, _, err := PodIDAndTypesMap(pod)
 	if err != nil {
