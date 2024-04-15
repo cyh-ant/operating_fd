@@ -34,8 +34,17 @@ import (
 	"kusionstack.io/operating/pkg/features"
 	"kusionstack.io/operating/pkg/utils"
 	"kusionstack.io/operating/pkg/utils/feature"
+	"kusionstack.io/operating/pkg/webhook/server/generic/pod"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
+
+var (
+	updatePodDeletionIndicationLabelInterval = 30 * 1000 * 1000 * 1000
+)
+
+func init() {
+	pod.RegisterAdmissionWebhook(New())
+}
 
 type GraceDelete struct {
 }
@@ -84,6 +93,15 @@ func (gd *GraceDelete) Validating(ctx context.Context, c client.Client, oldPod, 
 		if newPod.Labels == nil {
 			newPod.Labels = map[string]string{}
 		}
+
+		// update PodDeletionIndicationLabel every updatePodDeletionIndicationLabelInterval, default 30s
+		if timestamp, ok := newPod.Labels[appsv1alpha1.PodDeletionIndicationLabelKey]; ok {
+			unixNano, err := strconv.ParseInt(timestamp, 10, 64)
+			if err == nil && time.Now().UnixNano()-unixNano < int64(updatePodDeletionIndicationLabelInterval) {
+				return nil
+			}
+		}
+
 		newPod.Labels[appsv1alpha1.PodDeletionIndicationLabelKey] = strconv.FormatInt(time.Now().UnixNano(), 10)
 
 		return c.Update(ctx, newPod)
@@ -99,12 +117,7 @@ func (gd *GraceDelete) Validating(ctx context.Context, c client.Client, oldPod, 
 			finalizers = append(finalizers, f)
 		}
 	}
-
-	if len(finalizers) == 0 {
-		return fmt.Errorf("pod deletion process is underway and being managed by PodOpsLifecycle")
-	}
-
-	return fmt.Errorf("pod deletion process is underway and being managed by PodOpsLifecycle with finalizers: %v", finalizers)
+	return fmt.Errorf("podOpsLifecycle denied delete request, since related resources and finalizers have not been processed. Waiting for removing finalizers: %v", finalizers)
 }
 
 func (gd *GraceDelete) Mutating(ctx context.Context, c client.Client, oldPod, newPod *corev1.Pod, operation admissionv1.Operation) error {
