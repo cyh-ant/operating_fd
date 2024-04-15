@@ -25,6 +25,7 @@ import (
 
 	"kusionstack.io/operating/pkg/webhook/server/generic/pod/gracedelete"
 	"kusionstack.io/operating/pkg/webhook/server/generic/pod/opslifecycle"
+	"kusionstack.io/operating/pkg/webhook/server/generic/pod/resourceconsist"
 )
 
 var (
@@ -40,16 +41,7 @@ type AdmissionWebhook interface {
 func init() {
 	webhooks = append(webhooks, opslifecycle.New())
 	webhooks = append(webhooks, gracedelete.New())
-	// TODO: cancel for test
-	//for _, podResourceConsistWebhook := range resourceconsist.PodResourceConsistWebhooks {
-	//	webhooks = append(webhooks, podResourceConsistWebhook)
-	//}
-}
-
-func RegisterAdmissionWebhook(webhook AdmissionWebhook) {
-	webhooks = append(webhooks, webhook)
-}
-
-func ListAdmissionWebhooks() []AdmissionWebhook {
-	return webhooks
+	for _, podResourceConsistWebhook := range resourceconsist.PodResourceConsistWebhooks {
+		webhooks = append(webhooks, podResourceConsistWebhook)
+	}
 }
