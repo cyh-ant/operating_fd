@@ -34,17 +34,12 @@ import (
 	"kusionstack.io/operating/pkg/features"
 	"kusionstack.io/operating/pkg/utils"
 	"kusionstack.io/operating/pkg/utils/feature"
-	"kusionstack.io/operating/pkg/webhook/server/generic/pod"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 )
 
 var (
 	updatePodDeletionIndicationLabelInterval = 30 * 1000 * 1000 * 1000
 )
-
-func init() {
-	pod.RegisterAdmissionWebhook(New())
-}
 
 type GraceDelete struct {
 }
