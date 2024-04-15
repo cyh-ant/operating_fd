@@ -19,13 +19,8 @@ package generic
 import (
 	"sigs.k8s.io/controller-runtime/pkg/webhook/admission"
 
-	"kusionstack.io/operating/pkg/webhook/server/generic/collaset"
-	"kusionstack.io/operating/pkg/webhook/server/generic/persistentvolumeclaim"
-	"kusionstack.io/operating/pkg/webhook/server/generic/poddecoration"
-
 	webhookdmission "kusionstack.io/operating/pkg/webhook/admission"
 	"kusionstack.io/operating/pkg/webhook/server/generic/pod"
-	"kusionstack.io/operating/pkg/webhook/server/generic/podtransitionrule"
 )
 
 var (
@@ -45,15 +40,16 @@ func init() {
 	MutatingTypeHandlerMap["Pod/status"] = podMutatingHandler
 	ValidatingTypeHandlerMap["Pod"] = pod.NewValidatingHandler()
 
-	MutatingTypeHandlerMap["PodTransitionRule"] = podtransitionrule.NewMutatingHandler()
-	ValidatingTypeHandlerMap["PodTransitionRule"] = podtransitionrule.NewValidatingHandler()
-
-	MutatingTypeHandlerMap["PodDecoration"] = poddecoration.NewMutatingHandler()
-	ValidatingTypeHandlerMap["PodDecoration"] = poddecoration.NewValidatingHandler()
-
-	MutatingTypeHandlerMap["CollaSet"] = collaset.NewMutatingHandler()
-	ValidatingTypeHandlerMap["CollaSet"] = collaset.NewValidatingHandler()
-
-	MutatingTypeHandlerMap["PersistentVolumeClaim"] = persistentvolumeclaim.NewMutatingHandler()
-	ValidatingTypeHandlerMap["PersistentVolumeClaim"] = persistentvolumeclaim.NewValidatingHandler()
+	// TODO: cancel for test
+	//MutatingTypeHandlerMap["PodTransitionRule"] = podtransitionrule.NewMutatingHandler()
+	//ValidatingTypeHandlerMap["PodTransitionRule"] = podtransitionrule.NewValidatingHandler()
+	//
+	//MutatingTypeHandlerMap["PodDecoration"] = poddecoration.NewMutatingHandler()
+	//ValidatingTypeHandlerMap["PodDecoration"] = poddecoration.NewValidatingHandler()
+	//
+	//MutatingTypeHandlerMap["CollaSet"] = collaset.NewMutatingHandler()
+	//ValidatingTypeHandlerMap["CollaSet"] = collaset.NewValidatingHandler()
+	//
+	//MutatingTypeHandlerMap["PersistentVolumeClaim"] = persistentvolumeclaim.NewMutatingHandler()
+	//ValidatingTypeHandlerMap["PersistentVolumeClaim"] = persistentvolumeclaim.NewValidatingHandler()
 }
