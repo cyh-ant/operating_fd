@@ -121,9 +121,9 @@ func (r *ReconcilePodOpsLifecycle) Reconcile(ctx context.Context, request reconc
 		return reconcile.Result{}, nil
 	}
 
-	if pod.DeletionTimestamp != nil {
-		return reconcile.Result{}, nil
-	}
+	//if pod.DeletionTimestamp != nil {
+	//	return reconcile.Result{}, nil
+	//}
 
 	idToLabelsMap, _, err := PodIDAndTypesMap(pod)
 	if err != nil {
